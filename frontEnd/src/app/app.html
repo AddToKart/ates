@@ -1,0 +1,1329 @@
+<div class="app-container">
+  <!-- Header Toolbar -->
+  <mat-toolbar color="primary" class="app-header">
+    <button mat-icon-button (click)="toggleSidenav()" class="menu-button">
+      <mat-icon>menu</mat-icon>
+    </button>
+
+    <div class="header-title">
+      <mat-icon>school</mat-icon>
+      <span>{{ title }}</span>
+    </div>
+
+    <span class="spacer"></span>
+
+    <div class="header-actions">
+      <button mat-icon-button [matMenuTriggerFor]="notificationMenu">
+        <mat-icon matBadge="3" matBadgeColor="warn">notifications</mat-icon>
+      </button>
+      <mat-menu #notificationMenu="matMenu">
+        <button mat-menu-item>
+          <mat-icon>event</mat-icon>
+          <span>New event: Tech Workshop</span>
+        </button>
+        <button mat-menu-item>
+          <mat-icon>person_add</mat-icon>
+          <span>New alumni registered</span>
+        </button>
+        <button mat-menu-item>
+          <mat-icon>attach_money</mat-icon>
+          <span>Donation received</span>
+        </button>
+      </mat-menu>
+
+      <button mat-icon-button [matMenuTriggerFor]="userMenu">
+        <mat-icon>account_circle</mat-icon>
+      </button>
+      <mat-menu #userMenu="matMenu">
+        <button mat-menu-item>
+          <mat-icon>person</mat-icon>
+          <span>Profile</span>
+        </button>
+        <button mat-menu-item>
+          <mat-icon>settings</mat-icon>
+          <span>Settings</span>
+        </button>
+        <button mat-menu-item>
+          <mat-icon>logout</mat-icon>
+          <span>Logout</span>
+        </button>
+      </mat-menu>
+    </div>
+  </mat-toolbar>
+
+  <!-- Sidebar and Main Content -->
+  <mat-sidenav-container class="sidenav-container">
+    <mat-sidenav
+      [opened]="sidenavOpened"
+      mode="side"
+      class="app-sidenav"
+      fixedInViewport="true"
+      fixedTopGap="64"
+    >
+      <mat-nav-list class="navigation-list">
+        @for (item of navigationItems; track item.route) {
+        <mat-list-item
+          (click)="navigateTo(item.route)"
+          [class.active]="currentView === item.route"
+          class="nav-item"
+        >
+          <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+          <span matListItemTitle>{{ item.label }}</span>
+        </mat-list-item>
+        }
+      </mat-nav-list>
+
+      <div class="sidenav-footer">
+        <mat-list>
+          <mat-list-item>
+            <mat-icon matListItemIcon>help</mat-icon>
+            <span matListItemTitle>Help & Support</span>
+          </mat-list-item>
+        </mat-list>
+      </div>
+    </mat-sidenav>
+
+    <mat-sidenav-content class="main-content">
+      <!-- Dashboard View -->
+      @if (currentView === 'dashboard') {
+      <div class="content-header">
+        <h1>Dashboard Overview</h1>
+        <p>Welcome to the Alumni Tracking & Engagement System</p>
+      </div>
+
+      <!-- Statistics Cards -->
+      <div class="stats-grid">
+        <mat-card class="stat-card primary">
+          <mat-card-content>
+            <div class="stat-content">
+              <div class="stat-icon">
+                <mat-icon>group</mat-icon>
+              </div>
+              <div class="stat-info">
+                <h2>{{ totalAlumni }}</h2>
+                <p>Total Alumni</p>
+                <span class="stat-trend positive">+12% this month</span>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="stat-card accent">
+          <mat-card-content>
+            <div class="stat-content">
+              <div class="stat-icon">
+                <mat-icon>work</mat-icon>
+              </div>
+              <div class="stat-info">
+                <h2>{{ employedCount }}</h2>
+                <p>Employed Alumni</p>
+                <span class="stat-trend positive">+8% this month</span>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="stat-card warn">
+          <mat-card-content>
+            <div class="stat-content">
+              <div class="stat-icon">
+                <mat-icon>attach_money</mat-icon>
+              </div>
+              <div class="stat-info">
+                <h2>${{ totalContributions.toLocaleString() }}</h2>
+                <p>Total Contributions</p>
+                <span class="stat-trend positive">+25% this month</span>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="stat-card success">
+          <mat-card-content>
+            <div class="stat-content">
+              <div class="stat-icon">
+                <mat-icon>event</mat-icon>
+              </div>
+              <div class="stat-info">
+                <h2>{{ averageEventsAttended }}</h2>
+                <p>Avg Events/Alumni</p>
+                <span class="stat-trend positive">+5% this month</span>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <!-- Dashboard Content Grid -->
+      <div class="dashboard-grid">
+        <!-- Quick Actions -->
+        <mat-card class="quick-actions-card">
+          <mat-card-header>
+            <mat-card-title>Quick Actions</mat-card-title>
+            <mat-card-subtitle>Frequently used operations</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="action-buttons">
+              <button mat-raised-button (click)="navigateTo('alumni')">
+                <mat-icon>person_add</mat-icon>
+                Add New Alumni
+              </button>
+              <button mat-raised-button (click)="navigateTo('events')">
+                <mat-icon>event</mat-icon>
+                Create Event
+              </button>
+              <button mat-raised-button (click)="navigateTo('analytics')">
+                <mat-icon>analytics</mat-icon>
+                View Reports
+              </button>
+              <button mat-raised-button (click)="navigateTo('donations')">
+                <mat-icon>volunteer_activism</mat-icon>
+                Track Donations
+              </button>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Recent Activities -->
+        <mat-card class="recent-activities">
+          <mat-card-header>
+            <mat-card-title>Recent Activities</mat-card-title>
+            <mat-card-subtitle>Latest system updates</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="activity-list">
+              <div class="activity-item">
+                <mat-icon class="activity-icon">person_add</mat-icon>
+                <div class="activity-content">
+                  <div class="activity-title">New Alumni Registration</div>
+                  <div class="activity-subtitle">
+                    Emily Rodriguez joined the network
+                  </div>
+                  <div class="activity-time">2 hours ago</div>
+                </div>
+              </div>
+              <div class="activity-item">
+                <mat-icon class="activity-icon">event</mat-icon>
+                <div class="activity-content">
+                  <div class="activity-title">Event Registration</div>
+                  <div class="activity-subtitle">
+                    45 attendees registered for Tech Workshop
+                  </div>
+                  <div class="activity-time">5 hours ago</div>
+                </div>
+              </div>
+              <div class="activity-item">
+                <mat-icon class="activity-icon">attach_money</mat-icon>
+                <div class="activity-content">
+                  <div class="activity-title">Donation Received</div>
+                  <div class="activity-subtitle">
+                    $5,000 contribution from David Thompson
+                  </div>
+                  <div class="activity-time">1 day ago</div>
+                </div>
+              </div>
+              <div class="activity-item">
+                <mat-icon class="activity-icon">work</mat-icon>
+                <div class="activity-content">
+                  <div class="activity-title">Career Update</div>
+                  <div class="activity-subtitle">
+                    Sarah Johnson promoted to Senior Engineer
+                  </div>
+                  <div class="activity-time">2 days ago</div>
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Upcoming Events -->
+        <mat-card class="upcoming-events">
+          <mat-card-header>
+            <mat-card-title>Upcoming Events</mat-card-title>
+            <mat-card-subtitle>Next 30 days</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="event-list">
+              <div class="event-item">
+                <div class="event-date">
+                  <div class="date-day">15</div>
+                  <div class="date-month">MAR</div>
+                </div>
+                <div class="event-details">
+                  <div class="event-title">Annual Alumni Reunion</div>
+                  <div class="event-info">
+                    <mat-icon class="small-icon">location_on</mat-icon>
+                    <span>University Campus</span>
+                  </div>
+                  <div class="event-attendees">150 registered</div>
+                </div>
+              </div>
+              <div class="event-item">
+                <div class="event-date">
+                  <div class="date-day">20</div>
+                  <div class="date-month">FEB</div>
+                </div>
+                <div class="event-details">
+                  <div class="event-title">Tech Career Workshop</div>
+                  <div class="event-info">
+                    <mat-icon class="small-icon">computer</mat-icon>
+                    <span>Virtual Event</span>
+                  </div>
+                  <div class="event-attendees">45 registered</div>
+                </div>
+              </div>
+              <div class="event-item">
+                <div class="event-date">
+                  <div class="date-day">10</div>
+                  <div class="date-month">APR</div>
+                </div>
+                <div class="event-details">
+                  <div class="event-title">Career Fair 2024</div>
+                  <div class="event-info">
+                    <mat-icon class="small-icon">work</mat-icon>
+                    <span>University Gymnasium</span>
+                  </div>
+                  <div class="event-attendees">200 registered</div>
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Alumni Highlights -->
+        <mat-card class="alumni-highlights">
+          <mat-card-header>
+            <mat-card-title>Alumni Spotlights</mat-card-title>
+            <mat-card-subtitle>Featured success stories</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="highlight-list">
+              <div class="highlight-item">
+                <div class="highlight-header">
+                  <strong>David Thompson</strong>
+                  <mat-chip class="highlight-chip">Entrepreneur</mat-chip>
+                </div>
+                <div class="highlight-description">
+                  Founded TechFlow Solutions, raised $2M in Series A funding
+                </div>
+                <div class="highlight-stats">
+                  <span>Class of 2018 • $50K contributed</span>
+                </div>
+              </div>
+              <div class="highlight-item">
+                <div class="highlight-header">
+                  <strong>Sarah Johnson</strong>
+                  <mat-chip class="highlight-chip">Tech Leader</mat-chip>
+                </div>
+                <div class="highlight-description">
+                  Promoted to Senior Software Engineer at Microsoft
+                </div>
+                <div class="highlight-stats">
+                  <span>Class of 2020 • 5 events attended</span>
+                </div>
+              </div>
+              <div class="highlight-item">
+                <div class="highlight-header">
+                  <strong>Michael Chen</strong>
+                  <mat-chip class="highlight-chip">Product Leader</mat-chip>
+                </div>
+                <div class="highlight-description">
+                  Leading product strategy at Amazon for ML initiatives
+                </div>
+                <div class="highlight-stats">
+                  <span>Class of 2019 • $25K contributed</span>
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- System Overview -->
+        <mat-card class="system-overview">
+          <mat-card-header>
+            <mat-card-title>System Overview</mat-card-title>
+            <mat-card-subtitle>Current system status</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="overview-stats">
+              <div class="overview-item">
+                <mat-icon class="overview-icon">school</mat-icon>
+                <div class="overview-content">
+                  <div class="overview-number">15</div>
+                  <div class="overview-label">Departments</div>
+                </div>
+              </div>
+              <div class="overview-item">
+                <mat-icon class="overview-icon">event</mat-icon>
+                <div class="overview-content">
+                  <div class="overview-number">24</div>
+                  <div class="overview-label">Events This Year</div>
+                </div>
+              </div>
+              <div class="overview-item">
+                <mat-icon class="overview-icon">business</mat-icon>
+                <div class="overview-content">
+                  <div class="overview-number">150+</div>
+                  <div class="overview-label">Partner Companies</div>
+                </div>
+              </div>
+              <div class="overview-item">
+                <mat-icon class="overview-icon">public</mat-icon>
+                <div class="overview-content">
+                  <div class="overview-number">25</div>
+                  <div class="overview-label">Countries</div>
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Recent Graduates -->
+        <mat-card class="recent-graduates">
+          <mat-card-header>
+            <mat-card-title>Recent Graduates</mat-card-title>
+            <mat-card-subtitle>Last 6 months</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="graduate-list">
+              <div class="graduate-item">
+                <div class="graduate-info">
+                  <strong>Lisa Park</strong>
+                  <div class="graduate-degree">M.S. Data Science</div>
+                </div>
+                <div class="graduate-status">
+                  <mat-chip>Pursuing PhD</mat-chip>
+                </div>
+              </div>
+              <div class="graduate-item">
+                <div class="graduate-info">
+                  <strong>James Wilson</strong>
+                  <div class="graduate-degree">B.S. Computer Engineering</div>
+                </div>
+                <div class="graduate-status">
+                  <mat-chip>Software Engineer &#64; Google</mat-chip>
+                </div>
+              </div>
+              <div class="graduate-item">
+                <div class="graduate-info">
+                  <strong>Maria Garcia</strong>
+                  <div class="graduate-degree">MBA</div>
+                </div>
+                <div class="graduate-status">
+                  <mat-chip>Product Manager &#64; Apple</mat-chip>
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+      }
+
+      <!-- Alumni Directory View -->
+      @if (currentView === 'alumni') {
+      <div class="content-header">
+        <h1>Alumni Directory</h1>
+        <p>Manage and track alumni information</p>
+      </div>
+
+      <!-- Alumni Records Table -->
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Alumni Records</mat-card-title>
+          <mat-card-subtitle
+            >Manage and track alumni information</mat-card-subtitle
+          >
+        </mat-card-header>
+
+        <mat-card-content>
+          <div class="table-container">
+            <table mat-table [dataSource]="alumni" class="alumni-table">
+              <!-- Name Column -->
+              <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef>Name</th>
+                <td mat-cell *matCellDef="let alumni">
+                  <div class="name-cell">
+                    <strong>{{ alumni.name }}</strong>
+                    <div class="email">{{ alumni.email }}</div>
+                  </div>
+                </td>
+              </ng-container>
+
+              <!-- Graduation Year Column -->
+              <ng-container matColumnDef="graduationYear">
+                <th mat-header-cell *matHeaderCellDef>Graduation</th>
+                <td mat-cell *matCellDef="let alumni">
+                  <div class="graduation-info">
+                    <div>{{ alumni.graduationYear }}</div>
+                    <small>{{ alumni.degree }}</small>
+                  </div>
+                </td>
+              </ng-container>
+
+              <!-- Current Position Column -->
+              <ng-container matColumnDef="currentPosition">
+                <th mat-header-cell *matHeaderCellDef>Position</th>
+                <td mat-cell *matCellDef="let alumni">
+                  {{ alumni.currentPosition }}
+                </td>
+              </ng-container>
+
+              <!-- Company Column -->
+              <ng-container matColumnDef="company">
+                <th mat-header-cell *matHeaderCellDef>Company</th>
+                <td mat-cell *matCellDef="let alumni">{{ alumni.company }}</td>
+              </ng-container>
+
+              <!-- Employment Status Column -->
+              <ng-container matColumnDef="employmentStatus">
+                <th mat-header-cell *matHeaderCellDef>Status</th>
+                <td mat-cell *matCellDef="let alumni">
+                  <mat-chip [color]="getStatusColor(alumni.employmentStatus)">
+                    {{ alumni.employmentStatus }}
+                  </mat-chip>
+                </td>
+              </ng-container>
+
+              <!-- Events Attended Column -->
+              <ng-container matColumnDef="eventsAttended">
+                <th mat-header-cell *matHeaderCellDef>Events</th>
+                <td mat-cell *matCellDef="let alumni">
+                  <span
+                    matBadge="{{ alumni.eventsAttended }}"
+                    matBadgeColor="accent"
+                  >
+                    <mat-icon>event</mat-icon>
+                  </span>
+                </td>
+              </ng-container>
+
+              <!-- Contributions Column -->
+              <ng-container matColumnDef="contributions">
+                <th mat-header-cell *matHeaderCellDef>Contributions</th>
+                <td mat-cell *matCellDef="let alumni">
+                  ${{ alumni.contributions.toLocaleString() }}
+                </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="alumniDisplayedColumns"></tr>
+              <tr
+                mat-row
+                *matRowDef="let row; columns: alumniDisplayedColumns;"
+              ></tr>
+            </table>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Alumni Skills Section -->
+      <mat-card class="skills-card">
+        <mat-card-header>
+          <mat-card-title>Alumni Skills Overview</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="alumni-skills">
+            @for (person of alumni; track person.id) {
+            <div class="skill-person">
+              <h4>{{ person.name }}</h4>
+              <div class="skills-chips">
+                @for (skill of person.skills; track skill) {
+                <mat-chip color="primary">{{ skill }}</mat-chip>
+                }
+              </div>
+            </div>
+            }
+          </div>
+        </mat-card-content>
+      </mat-card>
+      }
+
+      <!-- Events View -->
+      @if (currentView === 'events') {
+      <div class="content-header">
+        <h1>Events Management</h1>
+        <p>Track event participation and engagement</p>
+      </div>
+
+      <!-- Events Table -->
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Alumni Events</mat-card-title>
+          <mat-card-subtitle
+            >Track event participation and engagement</mat-card-subtitle
+          >
+        </mat-card-header>
+
+        <mat-card-content>
+          <div class="table-container">
+            <table mat-table [dataSource]="events" class="events-table">
+              <!-- Event Name Column -->
+              <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef>Event Name</th>
+                <td mat-cell *matCellDef="let event">
+                  <strong>{{ event.name }}</strong>
+                </td>
+              </ng-container>
+
+              <!-- Date Column -->
+              <ng-container matColumnDef="date">
+                <th mat-header-cell *matHeaderCellDef>Date</th>
+                <td mat-cell *matCellDef="let event">
+                  {{ event.date | date:'mediumDate' }}
+                </td>
+              </ng-container>
+
+              <!-- Type Column -->
+              <ng-container matColumnDef="type">
+                <th mat-header-cell *matHeaderCellDef>Type</th>
+                <td mat-cell *matCellDef="let event">
+                  <mat-chip [color]="getEventTypeColor(event.type)"
+                    >{{ event.type }}</mat-chip
+                  >
+                </td>
+              </ng-container>
+
+              <!-- Attendees Column -->
+              <ng-container matColumnDef="attendees">
+                <th mat-header-cell *matHeaderCellDef>Attendees</th>
+                <td mat-cell *matCellDef="let event">
+                  <span
+                    matBadge="{{ event.attendees }}"
+                    matBadgeColor="primary"
+                  >
+                    <mat-icon>people</mat-icon>
+                  </span>
+                </td>
+              </ng-container>
+
+              <!-- Location Column -->
+              <ng-container matColumnDef="location">
+                <th mat-header-cell *matHeaderCellDef>Location</th>
+                <td mat-cell *matCellDef="let event">
+                  <div class="location-cell">
+                    <mat-icon>location_on</mat-icon>
+                    <span>{{ event.location }}</span>
+                  </div>
+                </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="eventsDisplayedColumns"></tr>
+              <tr
+                mat-row
+                *matRowDef="let row; columns: eventsDisplayedColumns;"
+              ></tr>
+            </table>
+          </div>
+        </mat-card-content>
+      </mat-card>
+      }
+
+      <!-- Analytics View -->
+      @if (currentView === 'analytics') {
+      <div class="content-header">
+        <h1>Analytics & Reports</h1>
+        <p>Comprehensive insights into alumni engagement</p>
+      </div>
+
+      <!-- Analytics Cards and Charts -->
+      <div class="analytics-grid">
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title>Employment Status Distribution</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="employment-stats">
+              @for (status of ['Employed', 'Self-Employed', 'Student',
+              'Unemployed']; track status) {
+              <div class="stat-item">
+                <mat-chip
+                  [class]="'status-chip status-' + status.toLowerCase().replace('-', '')"
+                  [color]="getStatusColor(status)"
+                  [ngStyle]="{
+                    'background-color': getStatusBackgroundColor(status) + ' !important',
+                    'color': 'white !important',
+                    '--mdc-chip-container-color': getStatusBackgroundColor(status),
+                    '--mdc-chip-label-text-color': 'white'
+                  }"
+                  >{{ status }}</mat-chip
+                >
+                <span class="count">{{ getStatusCount(status) }}</span>
+              </div>
+              }
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title>Top Contributors</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="contributors-list">
+              @for (person of getTopContributors(); track person.id) {
+              <div class="contributor-item">
+                <div class="contributor-info">
+                  <strong>{{ person.name }}</strong>
+                  <div class="contribution-amount">
+                    ${{ person.contributions.toLocaleString() }}
+                  </div>
+                </div>
+                <mat-icon color="accent">star</mat-icon>
+              </div>
+              }
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title>Event Participation Leaders</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="participation-list">
+              @for (person of getTopParticipants(); track person.id) {
+              <div class="participant-item">
+                <div class="participant-info">
+                  <strong>{{ person.name }}</strong>
+                  <div class="events-count">
+                    {{ person.eventsAttended }} events
+                  </div>
+                </div>
+                <mat-icon color="primary">event_available</mat-icon>
+              </div>
+              }
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+      }
+
+      <!-- Academic Records View -->
+      @if (currentView === 'academic') {
+      <div class="content-header">
+        <h1>Academic Records</h1>
+        <p>Manage student transcripts and academic achievements</p>
+      </div>
+
+      <!-- Academic Statistics -->
+      <div class="academic-stats-grid">
+        <mat-card class="stat-card primary">
+          <mat-card-content>
+            <div class="stat-content">
+              <div class="stat-icon">
+                <mat-icon>school</mat-icon>
+              </div>
+              <div class="stat-info">
+                <h2>15</h2>
+                <p>Departments</p>
+                <span class="stat-trend positive">Active Programs</span>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="stat-card accent">
+          <mat-card-content>
+            <div class="stat-content">
+              <div class="stat-icon">
+                <mat-icon>grade</mat-icon>
+              </div>
+              <div class="stat-info">
+                <h2>3.45</h2>
+                <p>Average GPA</p>
+                <span class="stat-trend positive">All Graduates</span>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="stat-card warn">
+          <mat-card-content>
+            <div class="stat-content">
+              <div class="stat-icon">
+                <mat-icon>workspace_premium</mat-icon>
+              </div>
+              <div class="stat-info">
+                <h2>89%</h2>
+                <p>Graduation Rate</p>
+                <span class="stat-trend positive">Last 5 Years</span>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="stat-card success">
+          <mat-card-content>
+            <div class="stat-content">
+              <div class="stat-icon">
+                <mat-icon>military_tech</mat-icon>
+              </div>
+              <div class="stat-info">
+                <h2>156</h2>
+                <p>Honors Graduates</p>
+                <span class="stat-trend positive">This Year</span>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <!-- Academic Content -->
+      <div class="academic-content-grid">
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title>Degree Programs</mat-card-title>
+            <mat-card-subtitle
+              >Academic programs and enrollment</mat-card-subtitle
+            >
+          </mat-card-header>
+          <mat-card-content>
+            <div class="program-list">
+              <div class="program-item">
+                <div class="program-info">
+                  <strong>Computer Science</strong>
+                  <div class="program-details">
+                    Bachelor's & Master's Programs
+                  </div>
+                </div>
+                <div class="program-stats">
+                  <mat-chip>245 Graduates</mat-chip>
+                </div>
+              </div>
+              <div class="program-item">
+                <div class="program-info">
+                  <strong>Business Administration</strong>
+                  <div class="program-details">
+                    MBA & Undergraduate Programs
+                  </div>
+                </div>
+                <div class="program-stats">
+                  <mat-chip>189 Graduates</mat-chip>
+                </div>
+              </div>
+              <div class="program-item">
+                <div class="program-info">
+                  <strong>Engineering</strong>
+                  <div class="program-details">
+                    Multiple Engineering Disciplines
+                  </div>
+                </div>
+                <div class="program-stats">
+                  <mat-chip>167 Graduates</mat-chip>
+                </div>
+              </div>
+              <div class="program-item">
+                <div class="program-info">
+                  <strong>Data Science</strong>
+                  <div class="program-details">Master's & PhD Programs</div>
+                </div>
+                <div class="program-stats">
+                  <mat-chip>98 Graduates</mat-chip>
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title>Academic Achievements</mat-card-title>
+            <mat-card-subtitle
+              >Notable academic accomplishments</mat-card-subtitle
+            >
+          </mat-card-header>
+          <mat-card-content>
+            <div class="achievement-list">
+              <div class="achievement-item">
+                <mat-icon class="achievement-icon">emoji_events</mat-icon>
+                <div class="achievement-content">
+                  <div class="achievement-title">Summa Cum Laude</div>
+                  <div class="achievement-subtitle">23 graduates this year</div>
+                </div>
+              </div>
+              <div class="achievement-item">
+                <mat-icon class="achievement-icon">star</mat-icon>
+                <div class="achievement-content">
+                  <div class="achievement-title">Dean's List</div>
+                  <div class="achievement-subtitle">
+                    156 students recognized
+                  </div>
+                </div>
+              </div>
+              <div class="achievement-item">
+                <mat-icon class="achievement-icon">workspace_premium</mat-icon>
+                <div class="achievement-content">
+                  <div class="achievement-title">Research Excellence</div>
+                  <div class="achievement-subtitle">45 published papers</div>
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+      }
+
+      <!-- Career Services View -->
+      @if (currentView === 'career') {
+      <div class="content-header">
+        <h1>Career Services</h1>
+        <p>Support alumni career development and job placement</p>
+      </div>
+
+      <!-- Career Statistics -->
+      <div class="career-stats-grid">
+        <mat-card class="stat-card primary">
+          <mat-card-content>
+            <div class="stat-content">
+              <div class="stat-icon">
+                <mat-icon>work</mat-icon>
+              </div>
+              <div class="stat-info">
+                <h2>92%</h2>
+                <p>Employment Rate</p>
+                <span class="stat-trend positive">Within 6 months</span>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="stat-card accent">
+          <mat-card-content>
+            <div class="stat-content">
+              <div class="stat-icon">
+                <mat-icon>trending_up</mat-icon>
+              </div>
+              <div class="stat-info">
+                <h2>$75K</h2>
+                <p>Average Salary</p>
+                <span class="stat-trend positive">Starting positions</span>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="stat-card warn">
+          <mat-card-content>
+            <div class="stat-content">
+              <div class="stat-icon">
+                <mat-icon>business</mat-icon>
+              </div>
+              <div class="stat-info">
+                <h2>150+</h2>
+                <p>Partner Companies</p>
+                <span class="stat-trend positive">Active recruiters</span>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="stat-card success">
+          <mat-card-content>
+            <div class="stat-content">
+              <div class="stat-icon">
+                <mat-icon>groups</mat-icon>
+              </div>
+              <div class="stat-info">
+                <h2>45</h2>
+                <p>Career Events</p>
+                <span class="stat-trend positive">This year</span>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <!-- Career Services Content -->
+      <div class="career-content-grid">
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title>Job Placements</mat-card-title>
+            <mat-card-subtitle>Recent graduate placements</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="placement-list">
+              <div class="placement-item">
+                <div class="company-logo">
+                  <mat-icon>business</mat-icon>
+                </div>
+                <div class="placement-details">
+                  <strong>Microsoft</strong>
+                  <div class="placement-info">Software Engineer • $95K</div>
+                  <div class="placement-count">8 alumni placed</div>
+                </div>
+              </div>
+              <div class="placement-item">
+                <div class="company-logo">
+                  <mat-icon>business</mat-icon>
+                </div>
+                <div class="placement-details">
+                  <strong>Amazon</strong>
+                  <div class="placement-info">Product Manager • $110K</div>
+                  <div class="placement-count">6 alumni placed</div>
+                </div>
+              </div>
+              <div class="placement-item">
+                <div class="company-logo">
+                  <mat-icon>business</mat-icon>
+                </div>
+                <div class="placement-details">
+                  <strong>Google</strong>
+                  <div class="placement-info">Data Scientist • $120K</div>
+                  <div class="placement-count">4 alumni placed</div>
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title>Career Resources</mat-card-title>
+            <mat-card-subtitle>Available support services</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="resource-list">
+              <div class="resource-item">
+                <mat-icon class="resource-icon">assignment</mat-icon>
+                <div class="resource-content">
+                  <div class="resource-title">Resume Reviews</div>
+                  <div class="resource-subtitle">
+                    Professional resume assistance
+                  </div>
+                </div>
+              </div>
+              <div class="resource-item">
+                <mat-icon class="resource-icon">question_answer</mat-icon>
+                <div class="resource-content">
+                  <div class="resource-title">Interview Prep</div>
+                  <div class="resource-subtitle">
+                    Mock interviews and coaching
+                  </div>
+                </div>
+              </div>
+              <div class="resource-item">
+                <mat-icon class="resource-icon"
+                  >connect_without_contact</mat-icon
+                >
+                <div class="resource-content">
+                  <div class="resource-title">Networking Events</div>
+                  <div class="resource-subtitle">
+                    Connect with industry professionals
+                  </div>
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+      }
+
+      <!-- Donations View -->
+      @if (currentView === 'donations') {
+      <div class="content-header">
+        <h1>Donations & Fundraising</h1>
+        <p>Track alumni contributions and fundraising campaigns</p>
+      </div>
+
+      <!-- Donation Statistics -->
+      <div class="donation-stats-grid">
+        <mat-card class="stat-card primary">
+          <mat-card-content>
+            <div class="stat-content">
+              <div class="stat-icon">
+                <mat-icon>volunteer_activism</mat-icon>
+              </div>
+              <div class="stat-info">
+                <h2>${{ totalContributions.toLocaleString() }}</h2>
+                <p>Total Raised</p>
+                <span class="stat-trend positive">All time</span>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="stat-card accent">
+          <mat-card-content>
+            <div class="stat-content">
+              <div class="stat-icon">
+                <mat-icon>trending_up</mat-icon>
+              </div>
+              <div class="stat-info">
+                <h2>$45K</h2>
+                <p>This Month</p>
+                <span class="stat-trend positive">+35% vs last month</span>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="stat-card warn">
+          <mat-card-content>
+            <div class="stat-content">
+              <div class="stat-icon">
+                <mat-icon>people</mat-icon>
+              </div>
+              <div class="stat-info">
+                <h2>67%</h2>
+                <p>Donor Participation</p>
+                <span class="stat-trend positive">Active donors</span>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="stat-card success">
+          <mat-card-content>
+            <div class="stat-content">
+              <div class="stat-icon">
+                <mat-icon>campaign</mat-icon>
+              </div>
+              <div class="stat-info">
+                <h2>3</h2>
+                <p>Active Campaigns</p>
+                <span class="stat-trend positive">Ongoing</span>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <!-- Donation Content -->
+      <div class="donation-content-grid">
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title>Active Campaigns</mat-card-title>
+            <mat-card-subtitle
+              >Current fundraising initiatives</mat-card-subtitle
+            >
+          </mat-card-header>
+          <mat-card-content>
+            <div class="campaign-list">
+              <div class="campaign-item">
+                <div class="campaign-info">
+                  <strong>Scholarship Fund</strong>
+                  <div class="campaign-description">
+                    Supporting student financial aid
+                  </div>
+                  <div class="campaign-progress">
+                    <div class="progress-bar">
+                      <div class="progress-fill" style="width: 75%"></div>
+                    </div>
+                    <div class="progress-text">$75K of $100K goal</div>
+                  </div>
+                </div>
+              </div>
+              <div class="campaign-item">
+                <div class="campaign-info">
+                  <strong>Research Lab Equipment</strong>
+                  <div class="campaign-description">
+                    Upgrading technology infrastructure
+                  </div>
+                  <div class="campaign-progress">
+                    <div class="progress-bar">
+                      <div class="progress-fill" style="width: 45%"></div>
+                    </div>
+                    <div class="progress-text">$22.5K of $50K goal</div>
+                  </div>
+                </div>
+              </div>
+              <div class="campaign-item">
+                <div class="campaign-info">
+                  <strong>Alumni Center Renovation</strong>
+                  <div class="campaign-description">
+                    Modernizing alumni facilities
+                  </div>
+                  <div class="campaign-progress">
+                    <div class="progress-bar">
+                      <div class="progress-fill" style="width: 30%"></div>
+                    </div>
+                    <div class="progress-text">$60K of $200K goal</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title>Recent Donations</mat-card-title>
+            <mat-card-subtitle>Latest contributions</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="donation-list">
+              <div class="donation-item">
+                <mat-icon class="donation-icon">volunteer_activism</mat-icon>
+                <div class="donation-content">
+                  <div class="donation-title">David Thompson</div>
+                  <div class="donation-subtitle">$5,000 • Scholarship Fund</div>
+                  <div class="donation-time">2 days ago</div>
+                </div>
+              </div>
+              <div class="donation-item">
+                <mat-icon class="donation-icon">volunteer_activism</mat-icon>
+                <div class="donation-content">
+                  <div class="donation-title">Sarah Johnson</div>
+                  <div class="donation-subtitle">$1,500 • Research Lab</div>
+                  <div class="donation-time">1 week ago</div>
+                </div>
+              </div>
+              <div class="donation-item">
+                <mat-icon class="donation-icon">volunteer_activism</mat-icon>
+                <div class="donation-content">
+                  <div class="donation-title">Michael Chen</div>
+                  <div class="donation-subtitle">$2,500 • Alumni Center</div>
+                  <div class="donation-time">2 weeks ago</div>
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+      }
+
+      <!-- Settings View -->
+      @if (currentView === 'settings') {
+      <div class="content-header">
+        <h1>System Settings</h1>
+        <p>Configure system preferences and user management</p>
+      </div>
+
+      <!-- Settings Content -->
+      <div class="settings-content-grid">
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title>User Management</mat-card-title>
+            <mat-card-subtitle
+              >Manage system users and permissions</mat-card-subtitle
+            >
+          </mat-card-header>
+          <mat-card-content>
+            <div class="settings-section">
+              <div class="setting-item">
+                <mat-icon class="setting-icon">admin_panel_settings</mat-icon>
+                <div class="setting-content">
+                  <div class="setting-title">Administrator Accounts</div>
+                  <div class="setting-subtitle">Manage admin user access</div>
+                </div>
+                <button mat-button color="primary">Configure</button>
+              </div>
+              <div class="setting-item">
+                <mat-icon class="setting-icon">people</mat-icon>
+                <div class="setting-content">
+                  <div class="setting-title">User Roles</div>
+                  <div class="setting-subtitle">Define user permissions</div>
+                </div>
+                <button mat-button color="primary">Configure</button>
+              </div>
+              <div class="setting-item">
+                <mat-icon class="setting-icon">security</mat-icon>
+                <div class="setting-content">
+                  <div class="setting-title">Security Settings</div>
+                  <div class="setting-subtitle">Password policies and 2FA</div>
+                </div>
+                <button mat-button color="primary">Configure</button>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title>System Configuration</mat-card-title>
+            <mat-card-subtitle>General system settings</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="settings-section">
+              <div class="setting-item">
+                <mat-icon class="setting-icon">notifications</mat-icon>
+                <div class="setting-content">
+                  <div class="setting-title">Notification Settings</div>
+                  <div class="setting-subtitle">Email and system alerts</div>
+                </div>
+                <button mat-button color="primary">Configure</button>
+              </div>
+              <div class="setting-item">
+                <mat-icon class="setting-icon">backup</mat-icon>
+                <div class="setting-content">
+                  <div class="setting-title">Data Backup</div>
+                  <div class="setting-subtitle">Automated backup schedule</div>
+                </div>
+                <button mat-button color="primary">Configure</button>
+              </div>
+              <div class="setting-item">
+                <mat-icon class="setting-icon"
+                  >integration_instructions</mat-icon
+                >
+                <div class="setting-content">
+                  <div class="setting-title">API Integration</div>
+                  <div class="setting-subtitle">
+                    External system connections
+                  </div>
+                </div>
+                <button mat-button color="primary">Configure</button>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title>Data Management</mat-card-title>
+            <mat-card-subtitle
+              >Import, export, and data maintenance</mat-card-subtitle
+            >
+          </mat-card-header>
+          <mat-card-content>
+            <div class="settings-section">
+              <div class="setting-item">
+                <mat-icon class="setting-icon">file_upload</mat-icon>
+                <div class="setting-content">
+                  <div class="setting-title">Data Import</div>
+                  <div class="setting-subtitle">Import alumni records</div>
+                </div>
+                <button mat-button color="primary">Import</button>
+              </div>
+              <div class="setting-item">
+                <mat-icon class="setting-icon">file_download</mat-icon>
+                <div class="setting-content">
+                  <div class="setting-title">Data Export</div>
+                  <div class="setting-subtitle">Export system data</div>
+                </div>
+                <button mat-button color="primary">Export</button>
+              </div>
+              <div class="setting-item">
+                <mat-icon class="setting-icon">cleaning_services</mat-icon>
+                <div class="setting-content">
+                  <div class="setting-title">Data Cleanup</div>
+                  <div class="setting-subtitle">Remove duplicate records</div>
+                </div>
+                <button mat-button color="primary">Cleanup</button>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+      }
+
+      <!-- Placeholder for other views -->
+      @if (currentView !== 'dashboard' && currentView !== 'alumni' &&
+      currentView !== 'events' && currentView !== 'analytics') {
+      <div class="content-header">
+        <h1>{{ currentView | titlecase }}</h1>
+        <p>This section is under development</p>
+      </div>
+
+      <mat-card class="coming-soon">
+        <mat-card-content>
+          <mat-icon class="large-icon">construction</mat-icon>
+          <h2>Coming Soon</h2>
+          <p>
+            This feature is currently being developed and will be available in
+            future updates.
+          </p>
+        </mat-card-content>
+      </mat-card>
+      }
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>
